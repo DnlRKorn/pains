@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<h1>Pains demo</h1>
+
+<p id="demo">Pains Output.</p>
+
+<input type="text" id="smile"></input>
+
+<button type="button" onclick="loadDoc()">Change Content</button>
+
+<script>
+function loadDoc() {
+  smile = $('#smile').val()
+  req = JSON.stringify({"smiles": smile});
+  $.ajax({
+    url:"_PAINS",
+    type:"POST",
+    data:req,
+    contentType:"application/json; charset=utf-8",
+    success: function(response, textStatus, jqXHR) {
+      document.getElementById("demo").innerHTML = response['Smiles']
+    },
+    error: function(jqXHR, textStatus, errorThrown){
+      document.getElementById("demo").innerHTM = 'Poorly formatted Smile String';
+   }
+
+  });
+
+}
+
+
+
+
+
+</script>
+
+</body>
+</html>
+
