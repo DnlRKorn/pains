@@ -1,2 +1,2 @@
 flask
-flask_restful
+-c conda-forge flask-restful 
