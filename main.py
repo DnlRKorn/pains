@@ -1,5 +1,4 @@
 from flask import Flask, request, url_for, jsonify, json, render_template, send_file#make_response
-from flask_restful import reqparse, abort, Api, Resource
 #from rdkit import Chem
 from rdkit.Chem import MolFromSmiles, MolFromSmarts, Draw
 from StringIO import StringIO
