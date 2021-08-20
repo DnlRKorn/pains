@@ -6,19 +6,33 @@
 
 <html>
 <head>
-<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="/pains.js"></script>
-<script type="text/javascript" language="javascript" src="jsme.js"></script>
-<script type="text/javascript" language="javascript" src="jsme/jsme.nocache.js"></script>
-<script src="js/bootstrap.min.js"></script>
+<script src="/static/pains.js"></script>
+<script type="text/javascript" language="javascript" src="/static/jsme.js"></script>
+<script type="text/javascript" language="javascript" src="/static/jsme/jsme.nocache.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <title>PAINS demo page</title>
 
 
 
+<style>
+.loader {
+  border: 8px solid #f3f3f3; /* Light grey */
+  border-top: 8px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 2s linear infinite;
+}
 
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
 
 </head>
 
@@ -62,6 +76,7 @@
 		
 		<tr>
 			<td>  <button class="btn" type="button" onclick='checkPAINS();'> Has PAINS substructure? </button></td>
+			<td> <div id="spinner" class="loader" style="display: none;"></div> </td>
 		</tr>
 <!--		<tr>
    	 		<td><img align="center" src="" id="highlightedImg"></td>

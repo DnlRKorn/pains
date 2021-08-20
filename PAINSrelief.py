@@ -5,7 +5,6 @@ from rdkit import DataStructs
 from rdkit.Chem.Fingerprints import FingerprintMols
 from rdkit.Chem import MACCSkeys, AllChem, rdmolops
 import csv
-#import json
 from flask import jsonify
 import sqlite3
 import cPickle
@@ -142,43 +141,52 @@ def pains(smileStr):
 
 	#Takes a list of compounds and generates a list of tuples sorted by Tc similarity to the query mol.
 	#Allows a unique identifier to be passed in and appended at the end of each tuple.
-	def findNearest(rows, id):
+	def findNearest(cur, sqliteQuery, id):
+		tup = (-1, -1, id) #essentially negitive similarity
 		NNs = []
-		for row in rows:
+		for i in range(20): NNs.append(tup)
+		for row in cur.execute(sqliteQuery):
 			fingerprint = row[1]
 			compoundFPS = cPickle.loads(str(fingerprint))
 			compoundTc = DataStructs.TanimotoSimilarity(compoundFPS, queryFPS)
-			NNs.append((compoundTc, row[0], id))	
-		sortedNN = sorted(NNs,cmp=None,key=None, reverse=True)
-		#print('len of sorted ' + str(len(sortedNN)))
-		return sortedNN
+			for i in range(20):
+				if(compoundTc > NNs[i][0]):
+					NNs.insert(i, (compoundTc, row[0], id))
+					NNs.pop()
+					break
+		#sortedNN = sorted(NNs,cmp=None,key=None, reverse=True)
+		print('len of sorted ' + str(len(NNs)) + " " + str(id))
+		return NNs
 	
 	#Grabs all enteries in the list of tuples. Return all those that are above 90% Tc Similarity.
         #Return top 5 no matter what their similarity is.	
 	def getTop5OrAbove90(nearestNeighborTuples, isPains=True): #needs to be sorted before being passed in
 		NNs = []
 		#print('len of nn tuples ' + str(len(nearestNeighborTuples)))
-		for i in range(len(nearestNeighborTuples)):
-			#print(str(i))
-			tup_i = nearestNeighborTuples[i]
-			if(len(NNs) < 5 or tup_i[0] > 0.9):
-				if(isPains):
+		if(isPains):
+			for i in range(len(nearestNeighborTuples)):
+				tup_i = nearestNeighborTuples[i]
+				print(tup_i)
+				if(len(NNs) < 5 or tup_i[0] > 0.9):
 					NNs.extend(buildPainsDic(tup_i[1],tup_i[0]))
-					#print('len of NNs ' + str(len(NNs)))
-				else:
+		else:
+			for i in range(len(nearestNeighborTuples)):
+				tup_i = nearestNeighborTuples[i]
+				if(len(NNs) < 5 or tup_i[0] > 0.9):
 					NNs.append(buildNonPainsDic(tup_i[1],tup_i[0]))
+
 		return NNs
 	
-	cur.execute(sqliteQuery2)
-	rows = cur.fetchall()
-	print(len(rows))
-	print('others lenght')
-	otherPainsNNsTup = findNearest(rows, 2)
+	#cur.execute(sqliteQuery2)
+	#rows = cur.fetchall()
+	#print(len(rows))
+	#print('others lenght')
+	otherPainsNNsTup = findNearest(cur, sqliteQuery2, 2)
 
 	cur.execute(sqliteQuery3)
 	rows = cur.fetchall()
 
-	nonPainsNNsTup = findNearest(rows, 0)
+	nonPainsNNsTup = findNearest(cur, sqliteQuery3, 0)
 
 	painsNNs = []
 	otherPainsNNs = []
@@ -187,15 +195,18 @@ def pains(smileStr):
 	if(hasPains):#Pick top 5 for each table. If there are more matches after 5 with hit rate above 0.9, add those too.
 		for i in range(len(painsSQLQueries)):
 			print(painsSQLQueries[i])
-			cur.execute(painsSQLQueries[i])		
-			rows = cur.fetchall()
-			painsNNsTup = findNearest(rows, 'painA')
+			#cur.execute(painsSQLQueries[i])		
+			#rows = cur.fetchall()
+			painsNNsTup = findNearest(cur, painsSQLQueries[i], 'painA')
 			pains_i_NN = getTop5OrAbove90(painsNNsTup)
 			painsNNs.append(pains_i_NN)
 		print('other pains tup ' + str(len(otherPainsNNsTup)))
 		otherPainsNNs = getTop5OrAbove90(otherPainsNNsTup)
 		print('other pains nn ' + str(len(otherPainsNNs)))
 		nonPainsNNs = getTop5OrAbove90(nonPainsNNsTup, False)
+
+		print('Non pains nn ' + str(len(nonPainsNNs)))
+
 	else:
 		nns = []
 		neighbor = sorted(otherPainsNNsTup + nonPainsNNsTup)
@@ -220,20 +231,3 @@ def pains(smileStr):
 	
 	similar_mols_json = jsonify(response)
 	return similar_mols_json
-	
-	
-'''
-
-for row in nonPainsCompoundData:
-		compoundMol = Chem.MolFromSmiles(row[1])
-		compoundFPS = MACCSkeys.GenMACCSKeys(compoundMol)
-		print(compoundFPS)
-		compoundTc = DataStructs.FingerprintSimilarity(compoundFPS, queryFPS)
-		compoundDic = { 'compound' : row, 'tc' : compoundTc, 'highlights' : highlights }
-		if compoundTc > mostSimilarTc : #finding mostSimilarMol
-			mostSimilarTc = compoundTc
-			if(compoundTc > 0.9): nonPainsSimilarMols.append(nonPainsMostSimilarMol) #append older mostSimilar if above 0.9
-		elif compoundTc > 0.9: #Tc value > 0.9
-			mostSimilarMol = compoundDic
-			nonPainsSimilarMols.append(compoundDic) 
-'''	

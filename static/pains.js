@@ -221,15 +221,18 @@ function martinsOutputToTable(smile_json){
 function checkPAINS() {
   smile = $('#jme_output').val()
   req = JSON.stringify({"smiles": smile});
+  $('#spinner').show();
   $.ajax({
     url:"_PAINS",
     type:"POST",
     data:req,
     contentType:"application/json; charset=utf-8",
     success: function(response, textStatus, jqXHR) {
+                $('#spinner').hide();
 		martinsOutputToTable(response);
     },
     error: function(jqXHR, textStatus, errorThrown){
+      $('#spinner').hide();
       document.getElementById("script_output").innerHTML = 'Poorly formatted Smile String';
    }
 

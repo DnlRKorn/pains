@@ -1,0 +1,186 @@
+<!doctype html>
+<!-- The DOCTYPE declaration above will set the     -->
+<!-- browser's rendering engine into                -->
+<!-- "Standards Mode". Replacing this declaration   -->
+<!-- with a "Quirks Mode" doctype is not supported. -->
+
+<html>
+<head>
+<link href="css/bootstrap.min.css" rel="stylesheet">
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="/pains.js"></script>
+<script type="text/javascript" language="javascript" src="jsme.js"></script>
+<script type="text/javascript" language="javascript" src="jsme/jsme.nocache.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>PAINS demo page</title>
+
+
+
+
+
+</head>
+
+
+<body>
+
+	<!-- RECOMMENDED if your web app will not function without JavaScript enabled -->
+	<noscript>
+		<div
+			style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
+			Your web browser must have JavaScript enabled in order for this
+			application to display correctly.</div>
+	</noscript>
+	<h1>PAINS demo page</h1>
+
+	<table>
+		<tr>
+			<td id="appletContainer"></td>
+		</tr>
+		<tr>
+			<td>For information on PAINS alerts, please reference the following articles:</br>
+(1) Baell, J. B.; Holloway, G. A. New Substructure Filters for Removal of Pan Assay Interference Compounds ( PAINS ) from Screening Libraries and for Their Exclusion in Bioassays. J. Med. Chem. 2010, 53, 2719–2740. <a>http://pubs.acs.org/doi/abs/10.1021/jm901137j</a> </br>
+(2) Capuzzi, S. J.; Muratov, E. N.; Tropsha, A. Phantom PAINS: Problems with the Utility of Alerts for Pan- Assay INterference CompoundS. J. Chem. Inf. Model. 2017, 57 (3), 417–427.<a>http://pubs.acs.org/doi/full/10.1021/acs.jcim.6b00465</a></td>
+		</tr>
+	</table>
+
+
+
+
+<br>
+<br>
+	<button class="btn" type="button" onclick='getSmiles();'>Generate smile</button>
+	<p align="left" style="font-weight: bold;">Input SMILES / Export chemical structure from applet:</p>	
+	<div class="container-fluid">
+	<table align="left" id="img_table">
+		<tr>
+			<td colspan="3"><textarea id="jme_output" ROWS="10" COLS="80">C[C@H]1[C@H]([C@H](C[C@@H](O1)O[C@H]2C[C@@](Cc3c2c(c4c(c3O)C(=O)c5cccc(c5C4=O)OC)O)(C(=O)CO)O)N)O</textarea>
+			</td>
+		</tr>
+		
+		
+		<tr>
+			<td>  <button class="btn" type="button" onclick='checkPAINS();'> Has PAINS substructure? </button></td>
+		</tr>
+<!--		<tr>
+   	 		<td><img align="center" src="" id="highlightedImg"></td>
+		</tr>-->	
+	</table>
+	<b id="noPAINS"></b>
+	</div>
+	<br>
+	<br>
+	<p style="font-weight: bold;" align="left">PAINS alerts:</p>
+
+	<div class="container-fluid">
+	<b> Global Analysis of PAINS Alert </br> Provided are the average percentage of "active" calls in PubChem bioassays for all compounds possessing the PAINS alert. 
+The average numbers of assays in which the compounds were tested are shown in parentheses. NPubChem and NDCM are number of compounds in PubChem and among Dark Chemical Matter that possess the alert, respectively.</b>
+	<table align="center" class="table table-bordered" id="pains_table">
+		<tr colspan="4">
+			<th  class="col-md-2">Smarts</th>
+			<th  class="col-md-2">Substructure</th>
+			<th  class="col-md-1">PAINS Alert</th>
+			<th  class="col-md-1">N<sub>PubChem</sub></th>
+			<th  class="col-md-1">N<sub>DCM</sub></th>
+			<th  class="col-md-1">Luciferase</th>
+			<th  class="col-md-1">BetaLactamase</th>
+			<th class="col-md-1">Fluorescence</th>
+			<th class="col-md-1">All Assays</th>
+		</tr>
+		<tbody id="output_table_body">
+		</tbody>
+	</table>
+	</div>
+	<a id="painsCSVLink"></a>
+	<br>
+	<br>
+	<p style="font-weight: bold;" align="left">Similar Compounds with matching PAINS alerts:</p></br>
+	<b>Provided are the PubChem bioassay results for similar compounds both with and without PAINS alerts.</b>
+	
+	<div class="container-fluid" id="pains_container">
+<!--	<table align="center" id="same_pains_A_table" class="table table-bordered">
+		<tr colspan="4">
+			<th class="col-md-1">CID</th>
+			<th class="col-md-1">Substructure</th>
+			<th class="col-md-1">Tc</th>
+			<th class="col-md-3">Analysis</th>
+			<th class="col-md-1">All Assays Active</th>
+			<th class="col-md-1">All Assays Total</th>
+			<th class="col-md-1">Luciferase Assays Active</th>
+			<th class="col-md-1">Luciferase Assays Total</th>
+			<th class="col-md-1">BetaLactamase Assays Active</th>
+			<th class="col-md-1">BetaLactamase Assays Total</th>
+			<th  class="col-md-.5">Fluorescence Assays Active</th>
+			<th  class="col-md-.5">Fluorescence Assays Total</th>
+			<th  class="col-md-1">PAINS Alert</th>
+		</tr>
+		<tbody id="molecule_table_body">
+		</tbody>
+	</table>	
+    	<a id="same_pains_A_csv"></a> -->
+	</div>
+	<p style="font-weight: bold;" align="left">Similar Compounds without matching PAINS alerts:</p>
+	<b>Provided are the PubChem bioassay results for similar compounds both with and without PAINS alerts.</b></br>
+	
+	<div class="container-fluid">
+	<table align="center" id="other_pains_table" class="table table-bordered">
+		<tr colspan="4">
+			<th class="col-md-1">CID</th>
+			<th class="col-md-1">Substructure</th>
+			<th class="col-md-1">Tc</th>
+			<th class="col-md-3">Analysis</th>
+			<th class="col-md-1">All Assays Active</th>
+			<th class="col-md-1">All Assays Total</th>
+			<th class="col-md-1">Luciferase Assays Active</th>
+			<th class="col-md-1">Luciferase Assays Total</th>
+			<th class="col-md-1">BetaLactamase Assays Active</th>
+			<th class="col-md-1">BetaLactamase Assays Total</th>
+			<th  class="col-md-.5">Fluorescence Assays Active</th>
+			<th  class="col-md-.5">Fluorescence Assays Total</th>
+			<th  class="col-md-1">PAINS Alert</th>
+		</tr>
+		<tbody id="molecule_table_body">
+		</tbody>
+	</table>
+    	<a id="other_pains_csv"></a>
+	</div>
+	<p style="font-weight: bold;" align="left">Similar Compounds without any PAINS alerts:</p></br>
+	<b>Provided are the PubChem bioassay results for similar compounds both with and without PAINS alerts.</b>
+	
+	<div class="container-fluid">
+	<table align="center" id="non_pains_table" class="table table-bordered">
+		<tr colspan="4">
+			<th class="col-md-1">CID</th>
+			<th class="col-md-1">Substructure</th>
+			<th class="col-md-1">Tc</th>
+			<th class="col-md-3">Analysis</th>
+			<th class="col-md-1">All Assays Active</th>
+			<th class="col-md-1">All Assays Total</th>
+			<th class="col-md-1">Luciferase Assays Active</th>
+			<th class="col-md-1">Luciferase Assays Total</th>
+			<th class="col-md-1">BetaLactamase Assays Active</th>
+			<th class="col-md-1">BetaLactamase Assays Total</th>
+			<th  class="col-md-.5">Fluorescence Assays Active</th>
+			<th  class="col-md-.5">Fluorescence Assays Total</th>
+			<th  class="col-md-1">PAINS Alert</th>
+		</tr>
+		<tbody id="molecule_table_body">
+		</tbody>
+	</table>
+    	<a id="non_pains_csv"></a>
+	</div>
+
+    <a id="all_csv"></a>
+    <p>
+        <!-- See also <a
+            href="http://www.molinspiration.com/jme/doc/jme_functions.html">description</a>
+        of the JME API.
+		<br> -->
+		For help, please click
+		<a href="PAINSdemoHelp.html"> here </a>
+    </p>
+
+</body>
+</html>
+

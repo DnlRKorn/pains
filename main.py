@@ -1,3 +1,8 @@
+print('hello world')
+import sys
+sys.path.insert(0,'/home/dkorn/miniconda2/lib/python2.7/site-packages')
+sys.path.insert(0,'/home/dkorn/miniconda2/lib')
+
 from flask import Flask, request, url_for, jsonify, json, render_template, send_file#make_response
 #from rdkit import Chem
 from rdkit.Chem import MolFromSmiles, MolFromSmarts, Draw
@@ -10,6 +15,7 @@ app = Flask(__name__)
 
 @app.route('/_PAINS',methods=['POST'])
 def PAINS():
+    #data = request.DATA
     chembenchargs=request.get_json() #Turn the request into a JSON for easy management.
     smiles=chembenchargs['smiles'] #Pull the smile out of the post request.
     print('Request being made for ' + smiles)
